@@ -19,7 +19,6 @@ const db = mysql.createConnection(
   console.log(`Connected to the employees_db database.`)
 );
 
-
 const promptQuestions = () => {
   let questions = inquirer
     .prompt([
@@ -125,8 +124,11 @@ const addEmployee = () => {
           message: "What is the employees role?",
           choices: () => {
             let array = [];
-            for (var i = 0; i < result.length; i++) {
-              array.push(result[i].title);
+            for (let i = 0; i < result.length; i++) {
+              array.push({
+                name: result[i].title,
+                value: result[i].employee_role,
+              });
             }
             let newArray = [...new Set(array)];
             return newArray;
@@ -146,7 +148,9 @@ const addEmployee = () => {
         }
 
         const sql = `INSERT INTO employees (first_name, last_name, employee_role, manager) VALUES (?, ?, ?, ?)`;
-        db.query(sql, [answers.firstName, answers.lastName, {employee_role: answers.role}, answers.manager],
+        db.query(
+          sql,
+          [answers.firstName, answers.lastName, {employee_role: answers.role}, answers.manager],
           (err, result) => {
             if (err) throw err;
             console.log(
@@ -209,11 +213,16 @@ const updateEmployee = () => {
         }
 
         const sql = `UPDATE employees SET ? WHERE ?`;
-        db.query(sql, [{employee_role: answers.updatedRole}, {last_name: answers.updateEmployee}],
+        db.query(
+          sql,
+          [
+            { employee_role: answers.updatedRole },
+            { last_name: answers.updateEmployee },
+          ],
           (err, result) => {
             if (err) throw err;
             console.log(`Updated ${answers.updatedEmployee}'s role`);
-            console.table(result)
+            console.table(result);
             viewAllEmployees();
             promptQuestions();
           }
@@ -274,23 +283,26 @@ const addRole = () => {
         },
       ])
       .then((answers) => {
-        
-
         for (let i = 0; i < result.length; i++) {
-          if (result[i].department_name === answers.department) {
-            let department = result[i];
+            if (result[i].department_id === answers.department) {
+              let department = result[i];
+             
+            }
           }
-        }
-        const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`;
+          const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`;
 
-        db.query(sql, [answers.newRole, answers.salary, answers.department], (err, result) => {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log(`the new role, ${answers.newRole}, has been added`);
-            viewAllRoles();
-          }
-        });
+          db.query(
+            sql,
+            [answers.newRole, answers.salary, answers.department],
+            (err, result) => {
+              if (err) {
+                console.error(err);
+              } else {
+                console.log(`the new role, ${answers.newRole}, has been added`);
+                viewAllRoles();
+              }
+            }
+          );
       });
   });
 };
@@ -335,8 +347,6 @@ const addDepartment = () => {
     });
 };
 
-
-
-// TODO --> 
+// TODO -->
 // FIX ADD ROLES
-// FIX MANAGERS 
+// FIX MANAGERS
