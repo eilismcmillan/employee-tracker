@@ -146,7 +146,7 @@ const addEmployee = () => {
         }
 
         const sql = `INSERT INTO employees (first_name, last_name, employee_role, manager) VALUES (?, ?, ?, ?)`;
-        db.query(sql, [answers.firstName, answers.lastName, answers.role, answers.manager],
+        db.query(sql, [answers.firstName, answers.lastName, {employee_role: answers.role}, answers.manager],
           (err, result) => {
             if (err) throw err;
             console.log(
@@ -263,7 +263,10 @@ const addRole = () => {
           choices: () => {
             let array = [];
             for (let i = 0; i < result.length; i++) {
-              array.push(result[i].department_name);
+              array.push({
+                name: result[i].department_name,
+                value: result[i].department_id,
+              });
             }
             let rolesArray = [...new Set(array)];
             return rolesArray;
@@ -280,12 +283,11 @@ const addRole = () => {
         }
         const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`;
 
-        db.query(sql, [answers.newRole, answers.salary, answers.department], (err, result) => {
+        db.query(sql, [answers.newRole, answers.salary, {department_id: answers.department}], (err, result) => {
           if (err) {
             console.error(err);
           } else {
-            console.table(result)
-            console.log(`the new role, ${answer.newRole}, has been added`);
+            console.log(`the new role, ${answers.newRole}, has been added`);
             viewAllRoles();
           }
         });
@@ -337,5 +339,4 @@ const addDepartment = () => {
 
 // TODO --> 
 // FIX ADD ROLES
-// FIX .ENV 
 // FIX MANAGERS 
