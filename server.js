@@ -283,7 +283,7 @@ const addRole = () => {
         }
         const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`;
 
-        db.query(sql, [answers.newRole, answers.salary, {department_id: answers.department}], (err, result) => {
+        db.query(sql, [answers.newRole, answers.salary, answers.department], (err, result) => {
           if (err) {
             console.error(err);
           } else {
